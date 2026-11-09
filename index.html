@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1c21">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ستريك</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1c21; --surface:#16272d; --surface2:#1d3239; --line:#27424b;
+  --text:#e9f2f1; --muted:#8fa9ad; --accent:#4fc3b5; --flame:#ffa94d;
+  --ok:#3fae7a; --okText:#06211d; --fail:#b85c5c; --failText:#fff;
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f2f6f5; --surface:#ffffff; --surface2:#e5eeed; --line:#cfdcdb; --text:#15262b; --muted:#5b7478; --accent:#17877a; --flame:#e07b00; --ok:#2e9e6b; --okText:#fff; --fail:#b04a4a;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 0}
+#app{max-width:480px;margin:0 auto;padding:20px 18px 130px}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.top h1{font-size:22px;margin:0;font-weight:800}
+.top small{color:var(--muted);font-size:15px}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:28px 20px 24px;text-align:center}
+.flame{width:56px;height:56px}
+.num{font-size:96px;font-weight:800;line-height:1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.unit{font-size:19px;color:var(--muted);margin:0 0 14px}
+.best{display:inline-block;background:var(--surface2);border-radius:999px;padding:4px 16px;font-size:15px;color:var(--muted)}
+.cheer{margin:16px 0 0;font-size:17px}
+.bar{height:8px;background:var(--surface2);border-radius:99px;margin:18px 6px 6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .5s}
+.barlabel{font-size:14px;color:var(--muted)}
+.study{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.study .snum{font-size:54px;font-weight:800;line-height:1}
+.study .slabel{color:var(--muted);font-size:15px;margin:2px 0 8px}
+.go{background:var(--surface2);border-radius:16px;padding:12px 14px;font-size:15px;text-align:center;max-width:140px;line-height:1.4}
+.quote{margin:14px 0 0;padding:16px 18px;border-radius:20px;background:var(--surface);border:1px solid var(--line);font-size:17px}
+.link{display:block;margin:20px auto 0;color:var(--muted);font-size:15px;text-decoration:underline;padding:8px}
+.relapse{display:block;margin:30px auto 0;padding:10px 22px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:15px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.sheet{width:100%;max-width:480px;background:var(--surface);border-radius:28px 28px 0 0;padding:26px 20px calc(24px + env(safe-area-inset-bottom));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}.bar i{transition:none}}
+.sheet h2{margin:0 0 8px;font-size:21px}
+.sheet p{margin:0 0 18px;color:var(--muted)}
+.btn{display:block;width:100%;padding:16px;border-radius:16px;font-weight:700;font-size:18px;text-align:center}
+.primary{background:var(--accent);color:#06211d}
+.small{margin-top:12px;padding:10px;color:var(--muted);font-size:15px;border-radius:12px;width:100%}
+.small[disabled]{opacity:.45}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.chip{padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface2)}
+.chip.on{background:var(--accent);color:#06211d;border-color:var(--accent);font-weight:700}
+textarea,input[type=date],input[type=text]{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:14px;color:var(--text);font-family:inherit;font-size:17px;padding:12px;margin-bottom:16px}
+textarea{min-height:84px;resize:vertical}
+.toast{position:fixed;inset-inline:16px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:448px;margin:0 auto;background:var(--surface2);border:1px solid var(--line);border-radius:18px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:20}
+.toast b{color:var(--accent);padding:6px 10px}
+.setup{margin-top:40px;text-align:center}
+.setup h2{font-size:26px;margin:0 0 8px}
+.setup p{color:var(--muted);margin:0 0 22px}
+
+/* nav */
+nav{position:fixed;bottom:0;inset-inline:0;background:var(--surface);border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav .in{max-width:480px;margin:0 auto;display:flex}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);font-size:13px;border-radius:14px}
+nav button svg{width:26px;height:26px}
+nav button.on{color:var(--accent);font-weight:700}
+
+/* tasks */
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px 18px;margin-bottom:14px}
+.prog .t{display:flex;justify-content:space-between;font-weight:700}
+.win{margin-top:10px;color:var(--ok);font-weight:700}
+.task{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:8px 12px;margin-bottom:10px}
+.chk{flex:none;width:34px;height:34px;border-radius:10px;border:2px solid var(--muted);display:grid;place-items:center}
+.chk.on{background:var(--accent);border-color:var(--accent)}
+.chk svg{width:20px;height:20px;opacity:0}
+.chk.on svg{opacity:1}
+.task .tt{flex:1;text-align:start;padding:10px 0;word-break:break-word}
+.task.done .tt{color:var(--muted);text-decoration:line-through}
+.edit{flex:none;color:var(--muted);font-size:14px;padding:8px}
+.empty{text-align:center;color:var(--muted);padding:26px 10px}
+.addbtn{margin-top:6px}
+
+/* calendar */
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.calhead h2{margin:0;font-size:20px}
+.arrow{width:44px;height:44px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{text-align:center;color:var(--muted);font-size:12px;padding-bottom:4px}
+.cell{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);font-size:16px;position:relative}
+.cell.ok{background:var(--ok);color:var(--okText);border-color:var(--ok);font-weight:700}
+.cell.fail{background:var(--fail);color:var(--failText);border-color:var(--fail);font-weight:700}
+.cell.today{outline:3px solid var(--accent);outline-offset:1px}
+.cell.blank{background:none;border:0}
+.cell .dot{position:absolute;bottom:5px;width:6px;height:6px;border-radius:50%;background:var(--flame)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;color:var(--muted);font-size:14px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:5px;display:inline-block}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav"></nav>
+<div id="layer"></div>
+<div id="toast"></div>
+
+<script>
+const KEY='streak-app-v1';
+const TRIGGERS=['ملل','توتر','وقت متأخر','وحدة','شيء آخر'];
+const QUOTES=[
+  'كل يوم جديد هو بداية جديدة.',
+  'الرغبة موجة، ترتفع ثم تنزل. اصبر عليها وتمرّ.',
+  'أنت أقوى مما تظن، وأثبتّ هذا بأيامك السابقة.',
+  'خطوة صغيرة كل يوم أفضل من قفزة ثم توقف.',
+  'الانضباط هو أن تختار ما تريده أكثر على ما تريده الآن.',
+  'لا تقارن بدايتك بنهاية غيرك.',
+  'التعثّر لا يمحو ما بنيته، بل يعلّمك أين تقوّي نفسك.'
+];
+const MILESTONES=[7,30,100,365];
+const WEEKDAYS=['سبت','أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة'];
+const FLAME='<svg class="flame" viewBox="0 0 64 64" aria-hidden="true"><path d="M33 4c2 10-4 14-8 20-3 4-5 8-5 13 0 9 6 16 14 16s14-7 14-15c0-7-4-11-6-16-1 4-3 6-5 7 1-8-1-17-4-25z" fill="var(--flame)"/><path d="M31 60c-5 0-9-4-9-9 0-4 3-7 6-10 1 3 3 4 5 4 0-3-1-5-1-7 5 4 8 8 8 13 0 5-4 9-9 9z" fill="var(--bg)" opacity=".35"/></svg>';
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#06211d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+let S=load();
+let tab='home';
+let flow=null;
+let lockTimer=null;
+let cal=(()=>{const n=new Date();return{y:n.getFullYear(),m:n.getMonth()}})();
+
+function load(){
+  let d={};
+  try{d=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+  return Object.assign({start:null,best:0,relapses:[],undo:null,days:{},bestStudy:0},d);
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+
+function pad(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
+function todayMid(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
+function todayKey(){return ymd(todayMid())}
+function daysSince(s){return Math.max(0,Math.round((todayMid()-parse(s))/864e5))}
+function ar(n){return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d])}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ---------- study data ---------- */
+function dayGet(k){return S.days[k]||{tasks:[]}}
+function dayRef(k){return S.days[k]||(S.days[k]={tasks:[]})}
+function isOk(k){const t=dayGet(k).tasks;return t.length>0&&t.every(x=>x.done)}
+function isFail(k){const t=dayGet(k).tasks;return k<todayKey()&&t.length>0&&!t.every(x=>x.done)}
+function studyStreak(){
+  let n=0;const c=todayMid();
+  if(isOk(ymd(c)))n++;
+  c.setDate(c.getDate()-1);
+  while(isOk(ymd(c))){n++;c.setDate(c.getDate()-1)}
+  return n;
+}
+function bestStudyCalc(){
+  const keys=Object.keys(S.days).filter(isOk).sort();
+  let best=0,run=0,prev=null;
+  for(const k of keys){
+    if(prev&&Math.round((parse(k)-parse(prev))/864e5)===1)run++;else run=1;
+    best=Math.max(best,run);prev=k;
+  }
+  return best;
+}
+
+function cheer(n){
+  if(n===0)return 'اليوم الأول هو الأصعب، وأنت بدأت.';
+  if(n<3)return 'بداية ممتازة، كمّل.';
+  if(n<7)return 'أنت تبني عادة جديدة، استمر.';
+  if(n<30)return 'أسبوع وأكثر! أنت أقوى مما كنت.';
+  if(n<100)return 'شهر كامل وأكثر. فخور بك.';
+  return 'رقم استثنائي. أنت قدوة لنفسك.';
+}
+
+/* ---------- shell ---------- */
+function icon(name){
+  if(name==='home')return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 4-3 6-3 10a3 3 0 006 0c0-2-1-3-1-5 3 2 5 5 5 8a7 7 0 11-14 0c0-6 5-8 7-13z"/></svg>';
+  if(name==='tasks')return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l2 2 3-3M4 13l2 2 3-3M4 20l2 2 3-3" transform="translate(0 -3)"/><path d="M13 6h8M13 13h8M13 20h8" transform="translate(0 -1)"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+}
+function renderNav(){
+  const nav=document.getElementById('nav');
+  if(!S.start){nav.innerHTML='';return}
+  const items=[['home','الرئيسية'],['tasks','المهام'],['cal','التقويم']];
+  nav.innerHTML='<div class="in">'+items.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}" ${tab===k?'aria-current="page"':''}>${icon(k)}<span>${l}</span></button>`).join('')+'</div>';
+  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render();window.scrollTo(0,0)});
+}
+
+function render(){
+  const app=document.getElementById('app');
+  renderNav();
+  if(!S.start){
+    app.innerHTML=`<div class="setup">
+      <h2>ستريك</h2>
+      <p>متى بدأت الإقلاع؟ سنحسب أيامك تلقائياً من هذا التاريخ.</p>
+      <input type="date" id="d0" value="${ymd(new Date())}" aria-label="تاريخ البداية">
+      <button class="btn primary" id="go">ابدأ</button>
+    </div>`;
+    document.getElementById('go').onclick=()=>{
+      S.start=document.getElementById('d0').value||ymd(new Date());save();render();
+    };
+    return;
+  }
+  if(tab==='tasks')return renderTasks(app);
+  if(tab==='cal')return renderCal(app);
+  renderHome(app);
+}
+
+/* ---------- home ---------- */
+function renderHome(app){
+  const waiting=parse(S.start)>todayMid();
+  const q=QUOTES[Math.floor(todayMid()/864e5)%QUOTES.length];
+  let habit='';
+  if(waiting){
+    const wait=Math.round((parse(S.start)-todayMid())/864e5);
+    const when=parse(S.start).toLocaleDateString('ar',{day:'numeric',month:'long'});
+    habit=`<section class="hero" aria-label="العدّ التنازلي">
+      <p class="unit" style="margin-top:6px">يبدأ العدّ بعد</p>
+      <div class="num">${ar(wait)}</div>
+      <p class="unit">يوم</p>
+      <span class="best">بداية التحدي: ${when}</span>
+      <p class="cheer">استعد، وبكرة تكتب أول يوم.</p>
+    </section>`;
+  }else{
+    const cur=daysSince(S.start);
+    if(cur>S.best){S.best=cur;save()}
+    const next=MILESTONES.find(m=>m>cur);
+    const prev=[0].concat(MILESTONES).filter(m=>m<=cur).pop();
+    const pct=next?Math.round((cur-prev)/(next-prev)*100):100;
+    habit=`<section class="hero" aria-label="عدّاد الأيام">
+      ${FLAME}
+      <div class="num">${ar(cur)}</div>
+      <p class="unit">يوم بدون العادة</p>
+      <span class="best">أفضل رقم: ${ar(S.best)} يوم</span>
+      <p class="cheer">${cheer(cur)}</p>
+      ${next?`<div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>
+      <div class="barlabel">باقي ${ar(next-cur)} يوم للشارة ${ar(next)}</div>`:''}
+    </section>`;
+  }
+  const sNow=studyStreak();
+  S.bestStudy=Math.max(S.bestStudy||0,bestStudyCalc(),sNow);save();
+  const tasks=dayGet(todayKey()).tasks;
+  const done=tasks.filter(x=>x.done).length;
+  const goText=tasks.length?`مهام اليوم<br>${ar(done)} من ${ar(tasks.length)}`:'أضف مهام اليوم';
+  app.innerHTML=`
+    <div class="top"><h1>ستريك</h1></div>
+    ${habit}
+    <section class="study" aria-label="ستريك الدراسة">
+      <div>
+        <div class="snum">${ar(sNow)}</div>
+        <div class="slabel">يوم التزام بالجدول</div>
+        <span class="best">أفضل رقم: ${ar(S.bestStudy)} يوم</span>
+      </div>
+      <button class="go" id="goTasks">${goText}</button>
+    </section>
+    <div class="quote">${q}</div>
+    <button class="link" id="editStart">تعديل تاريخ البداية</button>
+    ${waiting?'':'<button class="relapse" id="relapse">سجّلت انتكاسة</button>'}`;
+  document.getElementById('goTasks').onclick=()=>{tab='tasks';render();window.scrollTo(0,0)};
+  document.getElementById('editStart').onclick=openEdit;
+  const r=document.getElementById('relapse');
+  if(r)r.onclick=()=>{flow={step:1,trigger:null,note:''};drawFlow()};
+}
+
+/* ---------- tasks ---------- */
+function renderTasks(app){
+  const key=todayKey();
+  const tasks=dayGet(key).tasks;
+  const done=tasks.filter(x=>x.done).length;
+  const pct=tasks.length?Math.round(done/tasks.length*100):0;
+  const dateTxt=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});
+  const y=new Date();y.setDate(y.getDate()-1);
+  const yTasks=dayGet(ymd(y)).tasks;
+  let list='';
+  if(tasks.length){
+    list=tasks.map(t=>`<div class="task${t.done?' done':''}">
+      <button class="chk${t.done?' on':''}" data-id="${t.id}" role="checkbox" aria-checked="${t.done}" aria-label="${esc(t.t)}">${CHECK}</button>
+      <span class="tt">${esc(t.t)}</span>
+      <button class="edit" data-edit="${t.id}">تعديل</button>
+    </div>`).join('');
+  }else{
+    list=`<div class="empty">ما أضفت مهام لليوم.<br>أضف أول مهمة دراسية وابدأ يومك.</div>`;
+    if(yTasks.length)list+=`<button class="btn small" id="copyY">نسخ مهام أمس (${ar(yTasks.length)})</button>`;
+  }
+  app.innerHTML=`
+    <div class="top"><h1>مهام اليوم</h1><small>${dateTxt}</small></div>
+    <div class="prog">
+      <div class="t"><span>التقدّم</span><span>${ar(done)} من ${ar(tasks.length)}</span></div>
+      <div class="bar" style="margin:10px 0 0"><i style="width:${pct}%"></i></div>
+      ${tasks.length&&done===tasks.length?'<div class="win">يوم ناجح! زاد ستريك الدراسة.</div>':''}
+    </div>
+    ${list}
+    <button class="btn primary addbtn" id="addT">+ أضف مهمة</button>`;
+  app.querySelectorAll('.chk').forEach(b=>b.onclick=()=>{
+    const t=dayRef(key).tasks.find(x=>x.id===b.dataset.id);
+    if(t){t.done=!t.done;save();render()}
+  });
+  app.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openTask(b.dataset.edit));
+  document.getElementById('addT').onclick=()=>openTask(null);
+  const c=document.getElementById('copyY');
+  if(c)c.onclick=()=>{
+    dayRef(key).tasks=yTasks.map(t=>({id:newId(),t:t.t,done:false}));
+    save();render();
+  };
+}
+function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+function openTask(id){
+  const key=todayKey();
+  const t=id?dayGet(key).tasks.find(x=>x.id===id):null;
+  sheet(`<h2>${t?'تعديل المهمة':'مهمة جديدة'}</h2>
+    <input type="text" id="tt" maxlength="80" placeholder="مثال: مراجعة درس النحو" value="${t?esc(t.t):''}">
+    <button class="btn primary" id="ts">حفظ</button>
+    ${t?'<button class="btn small" id="td">حذف المهمة</button>':''}
+    <button class="btn small" id="tc">إلغاء</button>`);
+  const inp=document.getElementById('tt');
+  setTimeout(()=>inp.focus(),50);
+  const saveIt=()=>{
+    const v=inp.value.trim();
+    if(!v){inp.focus();return}
+    const d=dayRef(key);
+    if(t){const x=d.tasks.find(z=>z.id===id);if(x)x.t=v}
+    else d.tasks.push({id:newId(),t:v,done:false});
+    save();closeSheet();render();
+  };
+  document.getElementById('ts').onclick=saveIt;
+  inp.onkeydown=e=>{if(e.key==='Enter')saveIt()};
+  document.getElementById('tc').onclick=closeSheet;
+  const del=document.getElementById('td');
+  if(del)del.onclick=()=>{
+    const d=dayRef(key);d.tasks=d.tasks.filter(z=>z.id!==id);
+    save();closeSheet();render();
+  };
+}
+
+/* ---------- calendar ---------- */
+function renderCal(app){
+  const first=new Date(cal.y,cal.m,1);
+  const days=new Date(cal.y,cal.m+1,0).getDate();
+  const offset=(first.getDay()+1)%7; // Saturday first
+  const tk=todayKey();
+  const relapseDays=new Set(S.relapses.map(r=>ymd(new Date(r.date))));
+  let cells=WEEKDAYS.map(w=>`<div class="wd">${w}</div>`).join('');
+  for(let i=0;i<offset;i++)cells+='<div class="cell blank"></div>';
+  for(let d=1;d<=days;d++){
+    const k=cal.y+'-'+pad(cal.m+1)+'-'+pad(d);
+    let cls='cell';
+    if(isOk(k))cls+=' ok';else if(isFail(k))cls+=' fail';
+    if(k===tk)cls+=' today';
+    const lab=isOk(k)?'يوم ناجح':isFail(k)?'يوم غير مكتمل':'';
+    cells+=`<div class="${cls}" ${lab?`aria-label="${ar(d)}: ${lab}"`:''}>${ar(d)}${relapseDays.has(k)?'<span class="dot"></span>':''}</div>`;
+  }
+  const title=first.toLocaleDateString('ar',{month:'long',year:'numeric'});
+  app.innerHTML=`
+    <div class="top"><h1>التقويم</h1></div>
+    <div class="calhead">
+      <button class="arrow" id="prevM" aria-label="الشهر السابق">›</button>
+      <h2>${title}</h2>
+      <button class="arrow" id="nextM" aria-label="الشهر التالي">‹</button>
+    </div>
+    <div class="grid">${cells}</div>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>أنجزت كل المهام</span>
+      <span><i style="background:var(--fail)"></i>مهام ناقصة</span>
+      <span><i style="background:var(--flame);border-radius:50%"></i>يوم انتكاسة</span>
+    </div>`;
+  document.getElementById('prevM').onclick=()=>{cal.m--;if(cal.m<0){cal.m=11;cal.y--}render()};
+  document.getElementById('nextM').onclick=()=>{cal.m++;if(cal.m>11){cal.m=0;cal.y++}render()};
+}
+
+/* ---------- sheets ---------- */
+function sheet(html){
+  const l=document.getElementById('layer');
+  l.innerHTML=`<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  document.getElementById('scrim').onclick=e=>{if(e.target.id==='scrim')closeSheet()};
+}
+function closeSheet(){
+  clearInterval(lockTimer);flow=null;
+  document.getElementById('layer').innerHTML='';
+}
+
+function openEdit(){
+  sheet(`<h2>تاريخ البداية</h2><p>غيّره لو بدأت قبل ما تثبّت التطبيق، أو اختر تاريخاً قادماً.</p>
+    <input type="date" id="dn" value="${S.start}">
+    <button class="btn primary" id="sv">حفظ</button>
+    <button class="btn small" id="cx">إلغاء</button>`);
+  document.getElementById('cx').onclick=closeSheet;
+  document.getElementById('sv').onclick=()=>{
+    const v=document.getElementById('dn').value;
+    if(v){S.start=v;save()}
+    closeSheet();render();
+  };
+}
+
+/* ---------- relapse flow ---------- */
+function drawFlow(){
+  clearInterval(lockTimer);
+  const cur=daysSince(S.start);
+  if(flow.step===1){
+    sheet(`<h2>متأكد إنك انتكست؟</h2>
+      <p>عدّاد الأيام بيرجع للصفر. أفضل رقم عندك يبقى محفوظاً.</p>
+      <button class="btn primary" id="back">رجوع</button>
+      <button class="btn small" id="yes1">نعم، انتكست</button>`);
+    document.getElementById('back').onclick=closeSheet;
+    document.getElementById('yes1').onclick=()=>{flow.step=2;drawFlow()};
+  }else if(flow.step===2){
+    let left=5;
+    sheet(`<h2>تأكيد أخير</h2>
+      <p>وصلت إلى <b style="color:var(--text)">${ar(cur)} يوم</b>. بتبدأ العدّ من جديد. متأكد 100%؟</p>
+      <button class="btn primary" id="back">رجوع، أكمل التحدي</button>
+      <button class="btn small" id="yes2" disabled>نعم (${ar(left)})</button>`);
+    document.getElementById('back').onclick=closeSheet;
+    const y=document.getElementById('yes2');
+    y.onclick=()=>{flow.step=3;drawFlow()};
+    lockTimer=setInterval(()=>{
+      left--;
+      if(left<=0){clearInterval(lockTimer);y.disabled=false;y.textContent='نعم، متأكد'}
+      else y.textContent='نعم ('+ar(left)+')';
+    },1000);
+  }else{
+    sheet(`<h2>وش كان المحفّز؟</h2>
+      <p>معرفة السبب تساعدك تتجنبه المرة الجاية. ما في لوم، كل يوم بداية جديدة.</p>
+      <div class="chips" id="chips">${TRIGGERS.map(t=>`<button class="chip${flow.trigger===t?' on':''}" data-t="${t}">${t}</button>`).join('')}</div>
+      <textarea id="note" placeholder="ملاحظة قصيرة (اختياري)"></textarea>
+      <button class="btn primary" id="done">سجّل وابدأ من جديد</button>`);
+    document.getElementById('note').value=flow.note;
+    document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+      flow.note=document.getElementById('note').value;
+      flow.trigger=c.dataset.t;drawFlow();
+    });
+    document.getElementById('done').onclick=()=>{
+      flow.note=document.getElementById('note').value;
+      finishRelapse();
+    };
+  }
+}
+
+function finishRelapse(){
+  const cur=daysSince(S.start);
+  const id=Date.now();
+  S.undo={id,prevStart:S.start,prevBest:S.best,expires:id+60000};
+  S.best=Math.max(S.best,cur);
+  S.relapses.push({id,date:new Date().toISOString(),trigger:flow.trigger||'غير محدد',note:flow.note||'',days:cur});
+  S.start=ymd(new Date());
+  save();closeSheet();render();drawToast();
+}
+
+let toastTimer=null;
+function drawToast(){
+  clearInterval(toastTimer);
+  const t=document.getElementById('toast');
+  const tick=()=>{
+    if(!S.undo||Date.now()>=S.undo.expires){clearInterval(toastTimer);t.innerHTML='';if(S.undo){S.undo=null;save()}return}
+    const s=Math.ceil((S.undo.expires-Date.now())/1000);
+    t.innerHTML=`<div class="toast"><span>تم التسجيل. بدأت من جديد.</span><button id="undo"><b>تراجع (${ar(s)})</b></button></div>`;
+    document.getElementById('undo').onclick=undo;
+  };
+  tick();toastTimer=setInterval(tick,1000);
+}
+function undo(){
+  if(!S.undo)return;
+  S.start=S.undo.prevStart;S.best=S.undo.prevBest;
+  S.relapses=S.relapses.filter(r=>r.id!==S.undo.id);
+  S.undo=null;save();
+  clearInterval(toastTimer);document.getElementById('toast').innerHTML='';
+  render();
+}
+
+render();drawToast();
+</script>
+</body>
+</html>
