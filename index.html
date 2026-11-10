@@ -148,7 +148,7 @@ function parse(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p
 function todayMid(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
 function todayKey(){return ymd(todayMid())}
 function daysSince(s){return Math.max(0,Math.round((todayMid()-parse(s))/864e5))}
-function ar(n){return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d])}
+function ar(n){return String(n)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 /* ---------- study data ---------- */
@@ -223,7 +223,7 @@ function renderHome(app){
   let habit='';
   if(waiting){
     const wait=Math.round((parse(S.start)-todayMid())/864e5);
-    const when=parse(S.start).toLocaleDateString('ar',{day:'numeric',month:'long'});
+    const when=parse(S.start).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long'});
     habit=`<section class="hero" aria-label="العدّ التنازلي">
       <p class="unit" style="margin-top:6px">يبدأ العدّ بعد</p>
       <div class="num">${ar(wait)}</div>
@@ -278,7 +278,7 @@ function renderTasks(app){
   const tasks=dayGet(key).tasks;
   const done=tasks.filter(x=>x.done).length;
   const pct=tasks.length?Math.round(done/tasks.length*100):0;
-  const dateTxt=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});
+  const dateTxt=new Date().toLocaleDateString('ar-u-nu-latn',{weekday:'long',day:'numeric',month:'long'});
   const y=new Date();y.setDate(y.getDate()-1);
   const yTasks=dayGet(ymd(y)).tasks;
   let list='';
@@ -360,7 +360,7 @@ function renderCal(app){
     const lab=isOk(k)?'يوم ناجح':isFail(k)?'يوم غير مكتمل':'';
     cells+=`<div class="${cls}" ${lab?`aria-label="${ar(d)}: ${lab}"`:''}>${ar(d)}${relapseDays.has(k)?'<span class="dot"></span>':''}</div>`;
   }
-  const title=first.toLocaleDateString('ar',{month:'long',year:'numeric'});
+  const title=first.toLocaleDateString('ar-u-nu-latn',{month:'long',year:'numeric'});
   app.innerHTML=`
     <div class="top"><h1>التقويم</h1></div>
     <div class="calhead">
