@@ -1,6 +1,6 @@
 {
-  "name": "ستريك",
-  "short_name": "ستريك",
+  "name": "Streek",
+  "short_name": "Streek",
   "description": "تتبّع أيام الإقلاع والتزامك بالجدول الدراسي",
   "start_url": "./index.html",
   "scope": "./",
