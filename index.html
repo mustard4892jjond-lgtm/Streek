@@ -802,7 +802,7 @@ function renderSOS(app){
   document.getElementById('sosBack').onclick=closeSOS;
   document.getElementById('editReason').onclick=openReason;
   document.getElementById('bstart').onclick=startBreath;
-  document.getElementById('breset').onclick=()=>{clearInterval(breath);breath=null;renderSOS(app)};
+  document.getElementById('breset').onclick=()=>{clearInterval(breath);breath=null;const o=document.getElementById('orb');o.style.transition='none';o.style.transform='scale(1)';document.getElementById('bphase').textContent='جاهز؟';document.getElementById('bt').textContent='60';const b=document.getElementById('bstart');b.disabled=false;b.textContent='ابدأ التنفس'};
   setupLock();loadVideo();
 }
 function setupLock(){
@@ -838,9 +838,14 @@ function loadVideo(){
   probeSos().then(list=>{
     const w=document.getElementById('vwrap');if(!w||!sos.open)return;
     if(!list.length){w.innerHTML='<div class="muted" style="font-size:14px">ما فيه مقاطع بعد. ارفع sos1.m4a وما بعده على GitHub لتظهر هنا.</div>';return}
+    const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+    let queue=shuffle(list);
     const pick=()=>{
-      let i;do{i=Math.floor(Math.random()*list.length)}while(list.length>1&&i===sos.last);
-      sos.last=i;return list[i];
+      if(!queue.length){
+        queue=shuffle(list);
+        if(list.length>1&&queue[0]===sos.lastFile)queue.push(queue.shift());
+      }
+      const f=queue.shift();sos.lastFile=f;return f;
     };
     w.innerHTML=`<div class="aud"><div class="ai">🎧</div><div class="muted" style="font-size:14px;margin-bottom:8px">يشتغل مقطع عشوائي، وإذا خلص ينتقل لغيره</div><audio id="sv" controls preload="auto" src="${pick()}"></audio></div>`;
     const v=document.getElementById('sv');
