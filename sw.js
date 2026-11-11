@@ -1,4 +1,4 @@
-const CACHE='streak-v3';
+const CACHE='streak-v4';
 const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 const AUDIO=Array.from({length:10},(_,i)=>'./sos'+(i+1)+'.m4a');
 
@@ -18,7 +18,19 @@ self.addEventListener('activate',e=>{
 async function audioResponse(req){
   const c=await caches.open(CACHE);
   const cached=await c.match(req.url,{ignoreSearch:true});
-  if(!cached)return fetch(req);
+  if(!cached){
+    try{
+      const full=await fetch(req.url);
+      if(!full.ok)return full;
+      await c.put(req.url,full.clone());
+      const again=await c.match(req.url,{ignoreSearch:true});
+      if(!again)return full;
+      return audioFrom(again,req);
+    }catch(e){return Response.error()}
+  }
+  return audioFrom(cached,req);
+}
+async function audioFrom(cached,req){
   const buf=await cached.arrayBuffer();
   const type=cached.headers.get('Content-Type')||'audio/mp4';
   const m=/bytes=(\d*)-(\d*)/.exec(req.headers.get('range')||'');

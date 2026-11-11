@@ -760,10 +760,11 @@ function importData(f){
 const sos={open:false,end:0,iv:null,done:false,list:null,last:-1};
 let breath=null;
 function probeSos(){
-  if(sos.list)return Promise.resolve(sos.list);
+  if(sos.list&&sos.list.length)return Promise.resolve(sos.list);
   const ps=[];
   for(let i=1;i<=10;i++){
-    ps.push(fetch('sos'+i+'.m4a',{method:'HEAD'}).then(r=>r.ok?'sos'+i+'.m4a':null).catch(()=>null));
+    const f='sos'+i+'.m4a';
+    ps.push(fetch(f,{headers:{Range:'bytes=0-0'}}).then(r=>r.ok?f:null).catch(()=>null));
   }
   return Promise.all(ps).then(a=>{sos.list=a.filter(Boolean);return sos.list});
 }
