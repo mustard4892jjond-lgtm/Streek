@@ -169,6 +169,7 @@ nav button.on{color:var(--accent);font-weight:700}
 .stat span{color:var(--muted);font-size:14px}
 .entry{border-top:1px solid var(--line);padding:10px 0}
 .entry:first-child{border-top:0}
+.hint{display:none;position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:15px;font-weight:700;z-index:50;max-width:90%;text-align:center}
 </style>
 </head>
 <body>
@@ -176,6 +177,7 @@ nav button.on{color:var(--accent);font-weight:700}
 <nav id="nav"></nav>
 <div id="layer"></div>
 <div id="toast"></div>
+<div id="hint" class="hint" role="status"></div>
 
 <script>
 const KEY='streak-app-v1';
@@ -772,6 +774,7 @@ function openSOS(){
 function closeSOS(){
   clearInterval(sos.iv);clearInterval(breath);breath=null;
   const v=document.getElementById('sv');if(v)v.pause();
+  if('mediaSession' in navigator){try{navigator.mediaSession.metadata=null}catch(e){}}
   sos.open=false;render();window.scrollTo(0,0);
 }
 function reasonBox(){
@@ -850,7 +853,17 @@ function loadVideo(){
     };
     w.innerHTML=`<div class="aud"><div class="ai">🎧</div><div class="muted" style="font-size:14px;margin-bottom:8px">يشتغل مقطع عشوائي، وإذا خلص ينتقل لغيره</div><audio id="sv" controls preload="auto" src="${pick()}"></audio></div>`;
     const v=document.getElementById('sv');
-    v.onended=()=>{v.src=pick();v.play().catch(()=>{})};
+    const next=()=>{v.src=pick();v.play().catch(()=>{})};
+    v.onended=next;
+    v.onerror=next;
+    if('mediaSession' in navigator){
+      try{
+        navigator.mediaSession.metadata=new MediaMetadata({title:'SOS · الرغبة موجة وبتمرّ',artist:'Streek',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]});
+        navigator.mediaSession.setActionHandler('play',()=>v.play());
+        navigator.mediaSession.setActionHandler('pause',()=>v.pause());
+        navigator.mediaSession.setActionHandler('nexttrack',next);
+      }catch(e){}
+    }
     v.play().catch(()=>{});
   });
 }
@@ -996,6 +1009,33 @@ function checkReminder(){
     }
   }
 }
+
+/* ---------- back button: double press to exit ---------- */
+let exitArmed=false,exitTimer=null,hintTimer=null;
+function hint(t,ms){
+  const el=document.getElementById('hint');el.textContent=t;el.style.display='block';
+  clearTimeout(hintTimer);hintTimer=setTimeout(()=>{el.style.display='none'},ms||2000);
+}
+function pushTrap(){try{history.pushState({trap:1},'')}catch(e){}}
+history.replaceState({base:1},'');
+pushTrap();
+document.addEventListener('pointerdown',()=>{
+  if(!exitArmed&&!(history.state&&history.state.trap))pushTrap();
+},{passive:true});
+window.addEventListener('popstate',()=>{
+  if(sos.open){
+    if(sos.done)closeSOS();else hint('العدّاد شغال، خذ نفس');
+    pushTrap();return;
+  }
+  if(document.getElementById('scrim')){closeSheet();pushTrap();return}
+  if(SUBS.includes(tab)){go('more');pushTrap();return}
+  if(tab!=='home'){go('home');pushTrap();return}
+  if(exitArmed)return;
+  exitArmed=true;
+  hint('اضغط رجوع مرة ثانية للخروج',2000);
+  clearTimeout(exitTimer);
+  exitTimer=setTimeout(()=>{exitArmed=false;pushTrap()},2000);
+});
 
 /* ---------- init ---------- */
 applyTheme();
